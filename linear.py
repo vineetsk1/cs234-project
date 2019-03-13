@@ -52,8 +52,6 @@ class LinearUCB(Model):
 
             pred = np.argmax([pt1, pt2, pt3]) + 1 # Arm: 1, 2, or 3
             r_t = 0 if pred == labels[t] else -1
-            # self.logger.print("Probabilities:", pt1, pt2, pt3)
-            # self.logger.print("Chose arm", pred, "reward", r_t)
 
             if pred == 1:
                 A1 = A1 + xt.T.dot(xt)
