@@ -9,12 +9,13 @@ def main():
     args = parse_args()
     log = Logger(args)
     features, _, labels = get_data(
-        args.drop_age, args.drop_height, args.drop_weight)
+        args.drop_age, args.drop_height,
+        args.drop_weight, args.drop_inr)
     
     for model_name in args.models:
-        model = load_model(model_name, args)
-        preds = model.run(features)
-        acc = evaluate_preds(preds, labels)
+        model = load_model(model_name, args, log)
+        preds, lbls = model.run(features, labels)
+        acc = evaluate_preds(preds, lbls)
         log.print(model.name, "acc", acc)
 
     log.close()

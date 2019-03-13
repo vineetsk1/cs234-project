@@ -3,27 +3,28 @@ from utils import ages_to_decades
 from utils import convert_to_classes
 
 class Model():
-    def __init__(self, name, args):
+    def __init__(self, name, args, logger):
         self.name = name
         self.args = args
+        self.logger = logger
 
     def run(self, features, labels):
         raise Exception("Invalid model {}, please use subclass.".format(name))
 
 class FixedBaseline(Model):
-    def __init__(self, name, args):
-        super().__init__(name, args)
+    def __init__(self, name, args, logger):
+        super().__init__(name, args, logger)
 
     # Always predict class 2.
-    def run(self, features):
+    def run(self, features, labels):
         preds = np.ones(features.values.shape[0]) + 1
-        return preds
+        return preds, labels
 
 class ClinicalBaseline(Model):
-    def __init__(self, name, args):
-        super().__init__(name, args)
+    def __init__(self, name, args, logger):
+        super().__init__(name, args, logger)
 
-    def run(self, features):
+    def run(self, features, labels):
         ages = features['Age'].values
         ages = ages_to_decades(ages)
 
@@ -46,4 +47,4 @@ class ClinicalBaseline(Model):
         dose += 1.2799 * enzyme_inducer - .5695 * amiodarone
         dose += 4.0376
         dose = np.square(dose)
-        return convert_to_classes(dose)
+        return convert_to_classes(dose), labels

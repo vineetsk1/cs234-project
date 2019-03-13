@@ -20,7 +20,6 @@ class Logger():
 
         self.print_args()
 
-
     def print_args(self):
         self.print("Command: python " + " ".join(sys.argv))
         self.print("Running at day/time", str(datetime.datetime.now()))
