@@ -7,6 +7,18 @@ class LinearUCB(Model):
         super().__init__(name, args, logger)
 
     def run(self, features, labels):
+
+        # Remove features that shouldn't be categorical.
+        # Comorbidities has 1436 unique entries
+        # Medications has 1840 unique entries
+        features = features.drop(['Comorbidities', 'Medications'], axis=1)
+
+        # Debug: To print out number of unique values in each column
+        # Helps see which categorical variables shouldn't be categorical.
+        # for column in features:
+        #     nunique = len(features[column].unique())
+        #     print(column, nunique)
+
         # One hot encode the features
         features = pd.get_dummies(features, dummy_na=True).values
 
@@ -40,8 +52,8 @@ class LinearUCB(Model):
 
             pred = np.argmax([pt1, pt2, pt3]) + 1 # Arm: 1, 2, or 3
             r_t = 0 if pred == labels[t] else -1
-            self.logger.print("Probabilities:", pt1, pt2, pt3)
-            self.logger.print("Chose arm", pred, "reward", r_t)
+            # self.logger.print("Probabilities:", pt1, pt2, pt3)
+            # self.logger.print("Chose arm", pred, "reward", r_t)
 
             if pred == 1:
                 A1 = A1 + xt.T.dot(xt)
@@ -54,5 +66,6 @@ class LinearUCB(Model):
                 b3 = b3 + xt.dot(r_t)
 
             preds.append(pred)
-
+        
+        preds = np.asarray(preds)
         return preds, labels
