@@ -1,0 +1,10 @@
+Command: python main.py --models FixedBaseline
+Running at day/time 2019-03-13 13:44:26.714028
+Using settings...
+	 drop_age True
+	 drop_height True
+	 drop_weight True
+	 models ['FixedBaseline']
+Saving to drop_age_True_drop_height_True_drop_weight_True_models_FixedBaseline.txt
+FixedBaseline acc 0.6158230734154126
+Saving log...

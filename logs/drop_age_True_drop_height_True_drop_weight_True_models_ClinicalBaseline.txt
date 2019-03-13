@@ -1,0 +1,10 @@
+Command: python main.py --models ClinicalBaseline
+Running at day/time 2019-03-13 13:44:13.669067
+Using settings...
+	 drop_age True
+	 drop_height True
+	 drop_weight True
+	 models ['ClinicalBaseline']
+Saving to drop_age_True_drop_height_True_drop_weight_True_models_ClinicalBaseline.txt
+ClinicalBaseline acc 0.6527587779297765
+Saving log...
