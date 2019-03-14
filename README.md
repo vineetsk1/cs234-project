@@ -9,6 +9,7 @@ Vineet Kosaraju, Shuvam Chakraborty, Mason Swofford
 ### Data & Baselines
 
 - [x] Data loader
+- [ ] Height/Weight/Age/Target-INR across Demographics
 - [x] Fixed Baseline
 - [x] Clinical Baseline
 
@@ -16,8 +17,9 @@ Vineet Kosaraju, Shuvam Chakraborty, Mason Swofford
 
 - [x] Linear UCB Model
 - [x] Implement Regret
-- [ ] Save Regret/Acc Every t Steps
+- [x] Save Regret/Acc Every t Steps
 - [ ] Plot Across Runs (Multiple Runs)
+- [ ] GPU Support (Pytorch)
 
 ### Extensions
 

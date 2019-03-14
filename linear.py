@@ -1,7 +1,6 @@
 import numpy as np
 import pandas as pd
 from baseline import Model
-from tqdm import tqdm
 
 class LinearUCB(Model):
     def __init__(self, name, args):
@@ -39,11 +38,12 @@ class LinearUCB(Model):
         elif pred == 3:
             self.A3 = self.A3 + xt.dot(xt.T) # Shapes (d, d)
             self.b3 = self.b3 + r_t * xt    # Shapes (d, 1)
+        return pred
 
     def test(self, X):
         T, _ = X.shape
         preds = []
-        for t in tqdm(range(T)):
+        for t in range(T):
             pred = self._eval(X[t].reshape((X[t].shape[0], 1)))
             preds.append(pred)
         return np.asarray(preds)

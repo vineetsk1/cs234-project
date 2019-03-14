@@ -16,5 +16,6 @@ def parse_args():
 	parser.add_argument('-di', '--drop_inr', type=str2bool, default=False, help='Drop rows where target inr is nan.')
 	parser.add_argument('-alpha', '--alpha', type=float, default=0.1, help='<linUCB only> The learning rate.')
 	parser.add_argument('-m', '--models', nargs='+', required=True, help='<Required> List of models to run.')
+	parser.add_argument('-every', '--print_every', type=int, default=100, help='Print results every <int> epochs during training.')
 	args = parser.parse_args()
 	return args
