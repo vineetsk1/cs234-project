@@ -19,6 +19,7 @@ Vineet Kosaraju, Shuvam Chakraborty, Mason Swofford
 - [x] Implement Regret
 - [x] Save Regret/Acc Every t Steps
 - [ ] Plot Across Runs (Multiple Runs)
+- [x] Speedup LinUCB.test (if possible)
 - [ ] GPU Support (Pytorch)
 
 ### Extensions
