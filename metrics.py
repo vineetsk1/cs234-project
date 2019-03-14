@@ -41,21 +41,50 @@ class Evaluator():
         if not os.path.exists(self.dir):
             os.makedirs(self.dir)
 
-    def make_plot(self, x, y, title, name):
+    def make_plot(self, x, ymean, title, name, yerr=[]):
         sns.set_style("darkgrid")
-        plt.plot(x, y, marker='.')
+        if len(yerr) == 0:
+            plt.plot(x, ymean, marker='.')
+        else:
+            plt.errorbar(x, ymean, yerr=yerr, fmt='.', linestyle='-')
         plt.title(title)
 
-        pre = "{}_{}_run_{}_".format(self.model.name, name, self.nruns)
+        pre = "{}_{}_run_{}_".format(self.model.name, name, self.nruns if len(yerr) == 0 else "all")
         fname = args_to_str(self.args, ext=".png", pre=pre)
         self.logger.print("Saving plot...", fname)
         plt.savefig(os.path.join(self.dir, fname))
         plt.close()
 
     def evaluate_model(self):
-        ts, accs, regrets = self.run_once()
-        self.make_plot(ts, accs, "Accuracy vs. Time", "acc")
-        self.make_plot(ts, regrets, "Regret vs. Time", "regret")
+
+        all_ts = []
+        all_accs = []
+        all_regrets = []
+
+        for _ in range(self.args.repeats):
+            ts, accs, regrets = self.run_once()
+            all_ts.append(ts)
+            all_accs.append(accs)
+            all_regrets.append(regrets)
+            self.make_plot(ts, accs, "Accuracy vs. Time", "acc")
+            self.make_plot(ts, regrets, "Regret vs. Time", "regret")
+
+        self.logger.print(self.model.name, "Final Stats")
+        self.logger.print(self.model.name, "Timesteps", all_ts)
+        self.logger.print(self.model.name, "Accuracies", all_accs)
+        self.logger.print(self.model.name, "Regrets", all_regrets)
+
+        all_ts = np.asarray(all_ts)
+        all_accs = np.asarray(all_accs)
+        all_regrets = np.asarray(all_regrets)
+
+        self.logger.print(self.model.name, "Average")
+        self.logger.print(self.model.name, "Timesteps", all_ts.mean(axis=0))
+        self.logger.print(self.model.name, "Accuracies", all_accs.mean(axis=0))
+        self.logger.print(self.model.name, "Regrets", all_regrets.mean(axis=0))
+
+        self.make_plot(all_ts.mean(axis=0), all_accs.mean(axis=0), "Accuracy vs. Time", "acc", 2*all_accs.std(axis=0))
+        self.make_plot(all_ts.mean(axis=0), all_regrets.mean(axis=0), "Regret vs. Time", "regret", 2*all_regrets.std(axis=0))
 
     def run_once(self):
 

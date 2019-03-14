@@ -19,7 +19,7 @@ Vineet Kosaraju, Shuvam Chakraborty, Mason Swofford
 - [x] Implement Regret
 - [x] Save Regret/Acc Every t Steps
 - [x] Plot Regret/Acc over time
-- [ ] Average Across Runs, Confidence Intervals
+- [x] Average Across Runs, Confidence Intervals
 - [x] Fast LinUCB.test
 - [ ] GPU Support (Pytorch)
 
