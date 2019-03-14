@@ -14,18 +14,21 @@ class LinearUCB(Model):
         self.A1, self.A2, self.A3 = np.identity(d), np.identity(d), np.identity(d)       # Shapes (d, d)
         self.b1, self.b2, self.b3 = np.zeros((d, 1)), np.zeros((d, 1)), np.zeros((d, 1)) # Shapes (d, 1)
 
-    def _eval(self, xt, ia1=None, ia2=None, ia3=None, tt1=None, tt2=None, tt3=None):
+    def _eval(self, xt, thetas=None):
         
-        if ia1 is None:
+        if thetas is None:
             ia1, ia2, ia3 = np.linalg.inv(self.A1), np.linalg.inv(self.A2), np.linalg.inv(self.A3) # Shapes (d, d)
             tt1, tt2, tt3 = ia1.dot(self.b1), ia2.dot(self.b2), ia3.dot(self.b3) # Shapes (d, 1)
+            thetas = (ia1, ia2, ia3, tt1, tt2, tt3)
+        else:
+            ia1, ia2, ia3, tt1, tt2, tt3 = thetas
 
         pt1 = tt1.T.dot(xt) + self.args.alpha*np.sqrt(xt.T.dot(ia1).dot(xt)) # Shapes (1, 1)
         pt2 = tt2.T.dot(xt) + self.args.alpha*np.sqrt(xt.T.dot(ia2).dot(xt)) # Shapes (1, 1)
         pt3 = tt3.T.dot(xt) + self.args.alpha*np.sqrt(xt.T.dot(ia3).dot(xt)) # Shapes (1, 1)
 
         pred = np.argmax([pt1, pt2, pt3]) + 1 # Arm: 1, 2, or 3
-        return pred, (ia1, ia2, ia3, tt1, tt2, tt3)
+        return pred, thetas
 
     def train(self, xt, yt):
         xt = xt.reshape((xt.shape[0], 1)) # Shapes (d, 1)
@@ -45,9 +48,8 @@ class LinearUCB(Model):
     def test(self, X):
         T, _ = X.shape
         preds = []
-        ia1, ia2, ia3, tt1, tt2, tt3 = None, None, None, None, None, None
+        thetas = None
         for t in range(T):
-            pred, invs = self._eval(X[t].reshape((X[t].shape[0], 1)), ia1, ia2, ia3, tt1, tt2, tt3)
-            ia1, ia2, ia3, tt1, tt2, tt3 = invs
+            pred, thetas = self._eval(X[t].reshape((X[t].shape[0], 1)), thetas)
             preds.append(pred)
         return np.asarray(preds)

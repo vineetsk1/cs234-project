@@ -1,0 +1,18 @@
+Command: python main.py --models ClinicalBaseline
+Running at day/time 2019-03-13 22:59:01.139826
+Using settings...
+	 drop_age True
+	 drop_height True
+	 drop_weight True
+	 drop_inr False
+	 alpha 0.1
+	 models ['ClinicalBaseline']
+	 print_every 100
+Saving to drop_age_True_drop_height_True_drop_weight_True_drop_inr_False_alpha_0.1_models_ClinicalBaseline_print_every_100.txt
+ClinicalBaseline Run 1
+ClinicalBaseline Timesteps [4386]
+ClinicalBaseline Accuracies [0.6507067943456453]
+ClinicalBaseline Regrets [1532]
+Saving plot... ClinicalBaseline_acc_run_1_drop_age_True_drop_height_True_drop_weight_True_drop_inr_False_alpha_0.1_models_ClinicalBaseline_print_every_100.png
+Saving plot... ClinicalBaseline_regret_run_1_drop_age_True_drop_height_True_drop_weight_True_drop_inr_False_alpha_0.1_models_ClinicalBaseline_print_every_100.png
+Saving log...

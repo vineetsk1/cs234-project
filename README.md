@@ -18,7 +18,8 @@ Vineet Kosaraju, Shuvam Chakraborty, Mason Swofford
 - [x] Linear UCB Model
 - [x] Implement Regret
 - [x] Save Regret/Acc Every t Steps
-- [ ] Plot Across Runs (Multiple Runs)
+- [x] Plot Regret/Acc over time
+- [ ] Average Across Runs, Confidence Intervals
 - [x] Fast LinUCB.test
 - [ ] GPU Support (Pytorch)
 

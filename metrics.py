@@ -3,9 +3,18 @@ import pandas as pd
 from data import get_data
 from model import load_model
 from tqdm import tqdm
+from utils import args_to_str
+
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+import os
+import sys
 
 class Evaluator():
-    def __init__(self, args, model_name, logger):
+    def __init__(self, args, model_name, logger, directory="plots"):
         self.args = args
         self.logger = logger
 
@@ -28,8 +37,25 @@ class Evaluator():
         self.labels = labels
         self.nruns = 0
 
+        self.dir = directory
+        if not os.path.exists(self.dir):
+            os.makedirs(self.dir)
+
+    def make_plot(self, x, y, title, name):
+        sns.set_style("darkgrid")
+        plt.plot(x, y, marker='.')
+        plt.title(title)
+
+        pre = "{}_{}_run_{}_".format(self.model.name, name, self.nruns)
+        fname = args_to_str(self.args, ext=".png", pre=pre)
+        self.logger.print("Saving plot...", fname)
+        plt.savefig(os.path.join(self.dir, fname))
+        plt.close()
+
     def evaluate_model(self):
-        self.run_once()
+        ts, accs, regrets = self.run_once()
+        self.make_plot(ts, accs, "Accuracy vs. Time", "acc")
+        self.make_plot(ts, regrets, "Regret vs. Time", "regret")
 
     def run_once(self):
 

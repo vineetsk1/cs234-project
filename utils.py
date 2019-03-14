@@ -25,7 +25,7 @@ def ages_to_decades(ages):
     return np.array([int(age[0]) for age in ages])
 
 # Convert arguments array to string (for logging).
-def args_to_str(args):
+def args_to_str(args, ext=".txt", pre=""):
     args = vars(args)
     name = []
     for key in args:
@@ -35,4 +35,4 @@ def args_to_str(args):
         else:
             name.append("{}_{}".format(key, "_".join(val)))
 
-    return "_".join(name) + ".txt"
+    return pre + "_".join(name) + ext
