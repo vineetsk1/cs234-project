@@ -15,14 +15,14 @@ Vineet Kosaraju, Shuvam Chakraborty, Mason Swofford
 ### Linear Bandit
 
 - [x] Linear UCB Model
-- [] Implement Regret
-- [] Save Regret/Acc Every t Steps
-- [] Plot Across Runs
+- [ ] Implement Regret
+- [ ] Save Regret/Acc Every t Steps
+- [ ] Plot Across Runs
 
 ### Extensions
 
-- [] Reward structure experimentation
-- [] Error analysis
-- [] Risk sensitivity
-- [] Lasso Model
-- [] Other Models?
+- [ ] Reward structure experimentation
+- [ ] Error analysis
+- [ ] Risk sensitivity
+- [ ] Lasso Model
+- [ ] Other Models?
