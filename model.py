@@ -8,5 +8,5 @@ MODEL_DICT = {
     "LinearUCB": LinearUCB
 }
 
-def load_model(name, args, logger):
-    return MODEL_DICT[name](name, args, logger)
+def load_model(name, args):
+    return MODEL_DICT[name](name, args)

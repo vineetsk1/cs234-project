@@ -3,28 +3,50 @@ from utils import ages_to_decades
 from utils import convert_to_classes
 
 class Model():
-    def __init__(self, name, args, logger):
+    def __init__(self, name, args, baseline):
         self.name = name
         self.args = args
-        self.logger = logger
+        self.baseline = baseline
 
-    def run(self, features, labels):
+    def initialize(self, features):
+        raise Exception("Invalid model {}, please use subclass.".format(name))
+
+    # Training
+    # Fits a single example, updates model's parameters
+    def train(self, x, y):
+        raise Exception("Invalid model {}, please use subclass.".format(name))
+
+    # Testing
+    # Evaluates model on given features
+    def test(self, features):
         raise Exception("Invalid model {}, please use subclass.".format(name))
 
 class FixedBaseline(Model):
-    def __init__(self, name, args, logger):
-        super().__init__(name, args, logger)
+    def __init__(self, name, args):
+        super().__init__(name, args, True)
+
+    def initialize(self, features):
+        raise Exception("Invalid model {}, baseline does not have parameters.".format(name))
+
+    def train(self, x, y):
+        raise Exception("Invalid model {}, baseline does not train.".format(name))
 
     # Always predict class 2.
-    def run(self, features, labels):
+    def test(self, features):
         preds = np.ones(features.values.shape[0]) + 1
-        return preds, labels
+        return preds
 
 class ClinicalBaseline(Model):
-    def __init__(self, name, args, logger):
-        super().__init__(name, args, logger)
+    def __init__(self, name, args):
+        super().__init__(name, args, True)
 
-    def run(self, features, labels):
+    def initialize(self, features):
+        raise Exception("Invalid model {}, baseline does not have parameters.".format(name))
+
+    def train(self, x, y):
+        raise Exception("Invalid model {}, baseline does not train.".format(name))
+
+    def test(self, features):
         ages = features['Age'].values
         ages = ages_to_decades(ages)
 
@@ -47,4 +69,4 @@ class ClinicalBaseline(Model):
         dose += 1.2799 * enzyme_inducer - .5695 * amiodarone
         dose += 4.0376
         dose = np.square(dose)
-        return convert_to_classes(dose), labels
+        return convert_to_classes(dose)

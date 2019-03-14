@@ -24,13 +24,6 @@ def age_to_bin(decade):
 def ages_to_decades(ages):
     return np.array([int(age[0]) for age in ages])
 
-# Returns the percentage of predictions we got correct.
-def evaluate_preds(preds, labels):
-    total = preds.shape[0]
-
-    num_correct = np.sum(preds == labels)
-    return num_correct / total
-
 # Convert arguments array to string (for logging).
 def args_to_str(args):
     args = vars(args)

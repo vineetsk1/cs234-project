@@ -15,9 +15,9 @@ Vineet Kosaraju, Shuvam Chakraborty, Mason Swofford
 ### Linear Bandit
 
 - [x] Linear UCB Model
-- [ ] Implement Regret
+- [x] Implement Regret
 - [ ] Save Regret/Acc Every t Steps
-- [ ] Plot Across Runs
+- [ ] Plot Across Runs (Multiple Runs)
 
 ### Extensions
 
