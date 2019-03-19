@@ -2,42 +2,94 @@ import pandas as pd
 import numpy as np
 
 from utils import convert_to_classes
+from copy import deepcopy
+from collections import defaultdict
+from scipy.stats import percentileofscore
+
+def imputeMeasurements(df_orig):
+    df = deepcopy(df_orig)
+    race_gend_avg_height = defaultdict(list)
+    race_gend_avg_weight = defaultdict(list)
+    men_weight = list(df[(df['Gender']=='male')&(df['Weight (kg)'].isna()==False)]['Weight (kg)'])
+    women_weight = list(df[(df['Gender']=='female')&(df['Weight (kg)'].isna()==False)]['Weight (kg)'])
+    men_height = list(df[(df['Gender']=='male')&(df['Height (cm)'].isna()==False)]['Height (cm)'])
+    women_height = list(df[(df['Gender']=='female')&(df['Height (cm)'].isna()==False)]['Height (cm)'])
+    for _, row in df.iterrows():
+        if pd.isnull(row['Race']) or pd.isnull(row['Gender']):
+            continue
+        key = row['Race']+row['Gender']
+        if not pd.isnull(row['Height (cm)']):
+            race_gend_avg_height[key].append(row['Height (cm)'])
+        if not pd.isnull(row['Weight (kg)']):
+            race_gend_avg_weight[key].append(row['Weight (kg)'])
+            
+    for i,row in df.iterrows():
+        if not (pd.isnull(row['Height (cm)']) or pd.isnull(row['Weight (kg)'])) or pd.isnull(row['Gender']):
+            continue
+        if pd.isnull(row['Height (cm)']) and pd.isnull(row['Weight (kg)']):
+            if pd.isnull(row['Race']):
+                if row['Gender'] == 'male':
+                    df.at[i, 'Height (cm)'] = np.mean(men_height)
+                    df.at[i,'Weight(kg)'] = np.mean(men_weight)
+                else:
+                    df.at[i, 'Height (cm)'] = np.mean(women_height)
+                    df.at[i,'Weight(kg)'] = np.mean(women_weight)
+            else:
+                key = row['Race']+row['Gender']
+                df.at[i, 'Height (cm)'] = np.mean(race_gend_avg_height[key])
+                df.at[i,'Weight (kg)'] = np.mean(race_gend_avg_weight[key])
+        else:
+            if pd.isnull(row['Height (cm)']):
+                if pd.isnull(row['Race']):
+                    if row['Gender'] == 'male':
+                        perc = percentileofscore(men_weight, row['Weight (kg)'])
+                        df.at[i,'Height (cm)'] = np.percentile(men_height, perc)
+                    else:
+                        perc = percentileofscore(women_weight, row['Weight (kg)'])
+                        df.at[i,'Height (cm)'] = np.percentile(women_height, perc)
+                else:
+                    height_arr = race_gend_avg_height[row['Race']+row['Gender']]
+                    weight_arr = race_gend_avg_weight[row['Race']+row['Gender']]
+                    perc = percentileofscore(weight_arr, row['Weight (kg)'])
+                    df.at[i,'Height (cm)'] = np.percentile(height_arr, perc)
+            else:
+                if pd.isnull(row['Race']):
+                    if row['Gender'] == 'male':
+                        perc = percentileofscore(men_height, row['Height (cm)'])
+                        df.at[i,'Weight (kg)'] = np.percentile(men_weight, perc)
+                    else:
+                        perc = percentileofscore(women_height, row['Height (cm)'])
+                        df.at[i,'Weight (kg)'] = np.percentile(women_weight, perc)
+                else:
+                    height_arr = race_gend_avg_height[row['Race']+row['Gender']]
+                    weight_arr = race_gend_avg_weight[row['Race']+row['Gender']]
+                    perc = percentileofscore(height_arr, row['Height (cm)'])
+                    df.at[i,'Weight (kg)'] = np.percentile(weight_arr, perc)
+            
+    return df
 
 # Loads the data, removes rows missing GT data,
 # processes missing entries for age/height/weight
 # (either by removing or using the average),
 # and returns the features, the doses, and the 
 # corresponding class labels.
-def get_data(drop_age, drop_height, drop_weight, drop_inr):
+def get_data(args):
 
     # Load data, remove rows missing the GT data.
     df = pd.read_csv("data/warfarin.csv")
     df = df.dropna(subset=['Therapeutic Dose of Warfarin'])
+    df = df.dropna(subset=['Age'])
 
-    if drop_age:
-        df = df.dropna(subset=['Age'])
-    else:
-        decades = [int(age[0]) for age in df['Age'].dropna()]
-        avg_age = age_to_bin(int(np.mean(decades)))
-        df['Age'].fillna(avg_age, inplace=True)
-
-    if drop_height:
-        df = df.dropna(subset=['Height (cm)'])
+    if args.impute_type:
+        df = imputeMeasurements(df)
     else:
         avg_height = df['Height (cm)'].dropna().mean()
         df['Height (cm)'].fillna(avg_height, inplace=True)
-
-    if drop_weight:
-        df = df.dropna(subset=['Weight (kg)'])
-    else:
         avg_weight = df['Weight (kg)'].dropna().mean()
         df['Weight (kg)'].fillna(avg_weight, inplace=True)
 
-    if drop_inr:
-        df = df.dropna(subset=['Target INR'])
-    else:
-        avg_weight = df['Target INR'].dropna().mean()
-        df['Target INR'].fillna(avg_weight, inplace=True)
+    avg_inr = df['Target INR'].dropna().mean()
+    df['Target INR'].fillna(avg_inr, inplace=True)
 
     # For these columns, convert from float type to object:
     # These are indicator variables and should be binary classes.

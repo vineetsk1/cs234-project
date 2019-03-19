@@ -18,9 +18,7 @@ class Evaluator():
         self.args = args
         self.logger = logger
 
-        features, _, labels = get_data(
-            args.drop_age, args.drop_height,
-            args.drop_weight, args.drop_inr)
+        features, _, labels = get_data(args)
 
         self.model = load_model(model_name, args)
 
@@ -35,6 +33,7 @@ class Evaluator():
 
         self.features = features
         self.labels = labels
+        self.logger.print("Data has {} labels".format(len(labels)))
         self.nruns = 0
 
         self.dir = directory
