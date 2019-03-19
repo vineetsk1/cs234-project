@@ -23,6 +23,7 @@ def parse_args():
 	# Reward Hyperparameters
 	parser.add_argument('-rr', '--real_rewards', type=str2bool, default=False, help='If true, use real rewards for the bandits.')
 	parser.add_argument('-rrl2', '--real_rewards_l2', type=str2bool, default=False, help='If using real rewards, use L2 if this is true.')
+	parser.add_argument('-risk', '--risk_sensitivity', type=str2bool, default=False, help='If true, penalize larger mistakes using 0/-1/-2. Only used if not using real rewards.')
 
 	# Model-specific hyperparameters
 	parser.add_argument('-alpha', '--alpha', type=float, default=0.1, help='<linUCB only> The learning rate.')

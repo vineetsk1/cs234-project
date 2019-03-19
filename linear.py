@@ -34,10 +34,13 @@ class LinearUCB(Model):
         xt = xt.reshape((xt.shape[0], 1)) # Shapes (d, 1)
         pred, _, pts = self._eval(xt)
         if self.args.real_rewards:
-            r_t = pts[pred-1] - pts[yt-1]
+            r_t = (pts[pred-1] - pts[yt-1])
             r_t = -abs(r_t) if not self.args.real_rewards_l2 else -(r_t*r_t)
         else:
-            r_t = 0 if pred == yt else -1
+            if self.args.risk_sensitivity:
+                r_t = -1 * abs(pred - yt)
+            else:
+                r_t = 0 if pred == yt else -1
         if pred == 1:
             self.A1 = self.A1 + xt.dot(xt.T) # Shapes (d, d)
             self.b1 = self.b1 + r_t * xt    # Shapes (d, 1)

@@ -58,31 +58,38 @@ class Evaluator():
 
         all_ts = []
         all_accs = []
+        all_severes = []
         all_regrets = []
 
         for _ in range(self.args.repeats):
-            ts, accs, regrets = self.run_once()
+            ts, accs, severes, regrets = self.run_once()
             all_ts.append(ts)
             all_accs.append(accs)
+            all_severes.append(severes)
             all_regrets.append(regrets)
             self.make_plot(ts, accs, "Accuracy vs. Time", "acc")
+            self.make_plot(ts, severes, "Severe Mistakes vs. Time", "severe")
             self.make_plot(ts, regrets, "Regret vs. Time", "regret")
 
         self.logger.print(self.model.name, "Final Stats")
         self.logger.print(self.model.name, "Timesteps", all_ts)
         self.logger.print(self.model.name, "Accuracies", all_accs)
+        self.logger.print(self.model.name, "Severes", all_severes)
         self.logger.print(self.model.name, "Regrets", all_regrets)
 
         all_ts = np.asarray(all_ts)
         all_accs = np.asarray(all_accs)
+        all_severes = np.asarray(all_severes)
         all_regrets = np.asarray(all_regrets)
 
         self.logger.print(self.model.name, "Average")
         self.logger.print(self.model.name, "Timesteps", all_ts.mean(axis=0))
         self.logger.print(self.model.name, "Accuracies", all_accs.mean(axis=0))
+        self.logger.print(self.model.name, "Severes", all_severes.mean(axis=0))
         self.logger.print(self.model.name, "Regrets", all_regrets.mean(axis=0))
 
         self.make_plot(all_ts.mean(axis=0), all_accs.mean(axis=0), "Accuracy vs. Time", "acc", 2*all_accs.std(axis=0))
+        self.make_plot(all_ts.mean(axis=0), all_severes.mean(axis=0), "Severe Mistakes vs. Time", "severe", 2*all_severes.std(axis=0))
         self.make_plot(all_ts.mean(axis=0), all_regrets.mean(axis=0), "Regret vs. Time", "regret", 2*all_regrets.std(axis=0))
 
     def run_once(self):
@@ -100,7 +107,7 @@ class Evaluator():
         else:
             X = X[inds]
 
-        ts, accs, regrets, preds, preds_frozen = [], [], [], [], []
+        ts, accs, severes, regrets, preds, preds_frozen = [], [], [], [], [], []
         T, _ = X.shape
 
         # Training Loop
@@ -113,9 +120,11 @@ class Evaluator():
                 if t % self.args.print_every == 0:
                     preds_frozen = self.model.test(X)   # Freeze and test
                     acc_frozen = self.calculate_accuracy(preds_frozen, Y)
+                    severe_frozen = self.calculate_severity(preds_frozen, Y)
                     regret_running = self.calculate_regret(preds, Y[:len(preds)])
                     ts.append(t)
                     accs.append(acc_frozen)            # Report accuracy on entire dataset at each iteration.
+                    severes.append(severe_frozen)
                     regrets.append(regret_running)     # But report regret as a "so-far", running metric. See @860.
             preds_frozen = self.model.test(X)
         else:
@@ -123,22 +132,30 @@ class Evaluator():
             preds_frozen = preds
 
         # Metrics (Testing)        
+        severe_frozen = self.calculate_severity(preds_frozen, Y)
         acc_frozen = self.calculate_accuracy(preds_frozen, Y)
         regret_running = self.calculate_regret(preds, Y)
         ts.append(T)
         accs.append(acc_frozen)
+        severes.append(severe_frozen)
         regrets.append(regret_running)
 
         self.logger.print(self.model.name, "Run", self.nruns)
         self.logger.print(self.model.name, "Timesteps", ts)
         self.logger.print(self.model.name, "Accuracies", accs)
+        self.logger.print(self.model.name, "Severes", severes)
         self.logger.print(self.model.name, "Regrets", regrets)
 
-        return ts, accs, regrets
+        return ts, accs, severes, regrets
 
     def calculate_regret(self, preds, labels):
         incorrect = np.sum(preds != labels)
         return incorrect
+
+    def calculate_severity(self, preds, labels):
+        total = preds.shape[0]
+        incorrect = np.sum(np.abs(preds - labels) > 1) # more than 1 bucket off
+        return incorrect / total
 
     def calculate_accuracy(self, preds, labels):
         total = preds.shape[0]

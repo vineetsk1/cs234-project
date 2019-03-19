@@ -25,7 +25,7 @@ Vineet Kosaraju, Shuvam Chakraborty, Mason Swofford
 ### Extensions
 
 - [x] Reward structure experimentation
-- [ ] Risk sensitivity
+- [x] Risk sensitivity
 - [ ] Time dependent penalizing
 - [ ] Lasso Model
 
