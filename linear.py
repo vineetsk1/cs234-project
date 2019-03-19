@@ -14,6 +14,9 @@ class LinearUCB(Model):
         self.A1, self.A2, self.A3 = np.identity(d), np.identity(d), np.identity(d)       # Shapes (d, d)
         self.b1, self.b2, self.b3 = np.zeros((d, 1)), np.zeros((d, 1)), np.zeros((d, 1)) # Shapes (d, 1)
 
+        self.nsteps = 0
+        self.penalty = 1.0
+
     def _eval(self, xt, thetas=None):
         
         if thetas is None:
@@ -31,6 +34,11 @@ class LinearUCB(Model):
         return pred, thetas, pts
 
     def train(self, xt, yt):
+
+        self.nsteps += 1
+        if self.nsteps % self.args.penalty_after == 0:
+            self.penalty *= self.args.time_penalty
+
         xt = xt.reshape((xt.shape[0], 1)) # Shapes (d, 1)
         pred, _, pts = self._eval(xt)
         if self.args.real_rewards:
@@ -41,6 +49,7 @@ class LinearUCB(Model):
                 r_t = -1 * abs(pred - yt)
             else:
                 r_t = 0 if pred == yt else -1
+        r_t *= self.penalty
         if pred == 1:
             self.A1 = self.A1 + xt.dot(xt.T) # Shapes (d, d)
             self.b1 = self.b1 + r_t * xt    # Shapes (d, 1)

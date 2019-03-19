@@ -26,7 +26,7 @@ Vineet Kosaraju, Shuvam Chakraborty, Mason Swofford
 
 - [x] Reward structure experimentation
 - [x] Risk sensitivity
-- [ ] Time dependent penalizing
+- [x] Time dependent penalizing
 - [ ] Lasso Model
 
 ### Other Analysis
