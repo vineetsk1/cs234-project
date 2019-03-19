@@ -9,7 +9,7 @@ Vineet Kosaraju, Shuvam Chakraborty, Mason Swofford
 ### Data & Baselines
 
 - [x] Data loader
-- [ ] Height/Weight/Age/Target-INR across Demographics
+- [x] Height/Weight/Age/Target-INR across Demographics
 - [x] Fixed Baseline
 - [x] Clinical Baseline
 
@@ -21,12 +21,14 @@ Vineet Kosaraju, Shuvam Chakraborty, Mason Swofford
 - [x] Plot Regret/Acc over time
 - [x] Average Across Runs, Confidence Intervals
 - [x] Fast LinUCB.test
-- [ ] GPU Support (Pytorch)
 
 ### Extensions
 
-- [ ] Reward structure experimentation
-- [ ] Error analysis
+- [x] Reward structure experimentation
 - [ ] Risk sensitivity
+- [ ] Time dependent penalizing
 - [ ] Lasso Model
-- [ ] Other Models?
+
+### Other Analysis
+- [ ] Confusion matrices
+- [ ] Other???

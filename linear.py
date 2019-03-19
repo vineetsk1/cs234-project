@@ -26,14 +26,18 @@ class LinearUCB(Model):
         pt1 = tt1.T.dot(xt) + self.args.alpha*np.sqrt(xt.T.dot(ia1).dot(xt)) # Shapes (1, 1)
         pt2 = tt2.T.dot(xt) + self.args.alpha*np.sqrt(xt.T.dot(ia2).dot(xt)) # Shapes (1, 1)
         pt3 = tt3.T.dot(xt) + self.args.alpha*np.sqrt(xt.T.dot(ia3).dot(xt)) # Shapes (1, 1)
-
-        pred = np.argmax([pt1, pt2, pt3]) + 1 # Arm: 1, 2, or 3
-        return pred, thetas
+        pts = [pt1.item(), pt2.item(), pt3.item()]
+        pred = np.argmax(pts) + 1 # Arm: 1, 2, or 3
+        return pred, thetas, pts
 
     def train(self, xt, yt):
         xt = xt.reshape((xt.shape[0], 1)) # Shapes (d, 1)
-        pred, _ = self._eval(xt)
-        r_t = 0 if pred == yt else -1
+        pred, _, pts = self._eval(xt)
+        if self.args.real_rewards:
+            r_t = pts[pred-1] - pts[yt-1]
+            r_t = -abs(r_t) if not self.args.real_rewards_l2 else -(r_t*r_t)
+        else:
+            r_t = 0 if pred == yt else -1
         if pred == 1:
             self.A1 = self.A1 + xt.dot(xt.T) # Shapes (d, d)
             self.b1 = self.b1 + r_t * xt    # Shapes (d, 1)
@@ -50,6 +54,6 @@ class LinearUCB(Model):
         preds = []
         thetas = None
         for t in range(T):
-            pred, thetas = self._eval(X[t].reshape((X[t].shape[0], 1)), thetas)
+            pred, thetas, _ = self._eval(X[t].reshape((X[t].shape[0], 1)), thetas)
             preds.append(pred)
         return np.asarray(preds)
