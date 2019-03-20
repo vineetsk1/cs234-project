@@ -31,4 +31,5 @@ Vineet Kosaraju, Shuvam Chakraborty, Mason Swofford
 
 ### Other Analysis
 - [ ] Confusion matrices
+- [ ] Histograms: % errors by gender/race/age
 - [ ] Other???

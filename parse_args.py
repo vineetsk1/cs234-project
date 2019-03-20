@@ -28,7 +28,12 @@ def parse_args():
 	parser.add_argument('-pa', '--penalty_after', type=int, default=1000, help='Number of epochs after which we update the penalty.')
 
 	# Model-specific hyperparameters
+	# LinUCB
 	parser.add_argument('-alpha', '--alpha', type=float, default=0.1, help='<linUCB only> The learning rate.')
+	# Lasso
+	parser.add_argument('-q', '--q', type=float, default=1)
+	parser.add_argument('-l1', '--lambda1', type=float, default=0.05)
+	parser.add_argument('-l2', '--lambda2', type=float, default=0.05)
 
 	args = parser.parse_args()
 	return args
