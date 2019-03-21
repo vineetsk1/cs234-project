@@ -23,6 +23,7 @@ def parse_args():
 	# Reward Hyperparameters
 	parser.add_argument('-rr', '--real_rewards', type=str2bool, default=False, help='If true, use real rewards for the bandits.')
 	parser.add_argument('-rrl2', '--real_rewards_l2', type=str2bool, default=False, help='If using real rewards, use L2 if this is true.')
+	parser.add_argument('-rtan', '--real_tanh', type=str2bool, default=False, help='If using real rewards, use tanh if this is true.')
 	parser.add_argument('-risk', '--risk_sensitivity', type=str2bool, default=False, help='If true, penalize larger mistakes using 0/-1/-2. Only used if not using real rewards.')
 	parser.add_argument('-tp', '--time_penalty', type=float, default=1.0, help='Every penalty_after epochs, penalize mistakes even more by this factor. If 1.0, no penalizing. If >1, penalty increases with time. If <1, penalty decreases with time.')
 	parser.add_argument('-pa', '--penalty_after', type=int, default=1000, help='Number of epochs after which we update the penalty.')

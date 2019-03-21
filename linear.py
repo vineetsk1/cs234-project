@@ -44,6 +44,9 @@ class LinearUCB(Model):
         if self.args.real_rewards:
             r_t = (pts[pred-1] - pts[yt-1])
             r_t = -abs(r_t) if not self.args.real_rewards_l2 else -(r_t*r_t)
+            if self.args.real_tanh:
+                r_t = -r_t
+                r_t = -np.tanh(r_t) # map reward to -1 to 0.
         else:
             if self.args.risk_sensitivity:
                 r_t = -1 * abs(pred - yt)

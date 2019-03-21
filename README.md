@@ -27,9 +27,8 @@ Vineet Kosaraju, Shuvam Chakraborty, Mason Swofford
 - [x] Reward structure experimentation
 - [x] Risk sensitivity
 - [x] Time dependent penalizing
-- [ ] Lasso Model
+- [x] Lasso Model
 
 ### Other Analysis
-- [ ] Confusion matrices
-- [ ] Histograms: % errors by gender/race/age
-- [ ] Other???
+- [x] Confusion matrices
+- [x] Histograms: % errors by gender/race/age
